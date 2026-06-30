@@ -192,10 +192,11 @@ These values are stored in:
 GitHub Repository → Settings → Secrets and variables → Actions
 ```
 
-## 5. AWS CLI Commands Used
-## 6. Lessons Learned
+### AWS CLI Commands Used
 
 
+
+## 5. Appendix 
 ```
 name: Deploy to AWS Beanstalk
 
