@@ -32,9 +32,77 @@ The build job performs the following steps:
 
 Separating each job from the others, making it easier to understand the process being done within the GitHub Actions.
 
+```
+jobs:
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        # Get my GitHub repository code and place it inside the workflow workspace.
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+          cache: 'npm'
+          cache-dependency-path: 'sample-app/package-lock.json'
+      
+      - name: Install dependencies
+        working-directory: ./sample-app
+        run: npm ci
+        # Cleanly installs the pakcages from package-lock.json, 
+        # ensuring a consistent and reproducible build environment.
+      
+      - name: Run tests
+        working-directory: ./sample-app
+        run: npm test
+        continue-on-error: true
+        # Tells github to continue the workflow even if the tests fail, 
+        # allowing for further steps to be executed.
+      
+      - name: Build application
+        working-directory: ./sample-app
+        run: npm run build
+      
+      - name: Create deployment package
+        run: |
+          cd sample-app
+          zip -r ../app.zip . -x "node_modules/*" ".git/*"
+          cd ..
+      
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: app.zip
+          retention-days: 5
+```
+
 ### OIDC Authentication Test
 
 The reason for the OIDC authentication test is to confirm that GitHub Actions can securely authenticate to AWS using an IAM role. This provides a quick and safe method, preventing long-lived access keys; the workflow uses GitHub OpenID Connect to request temporary AWS credentials. Allowing for improved security, since no permanent/ hard coded credentials are stored inside the workflow 
+
+```
+oidc-test:
+    name: OIDC Test
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.1.0
+        with:
+          aws-region: eu-west-2
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+          # The secrete is within Github settings -> Secrets and variable -> Actions
+          # -> then to the Repository secrets
+      - name: Test AWS Credentials
+        run: aws sts get-caller-identity
+```
 
 ### Deploy to staging
 
@@ -49,6 +117,54 @@ The staging deployment job performs the following steps:
 - Creates a new Elastic Beanstalk application version
   
 - Updates the Elastic Beanstalk environment to deploy the new version
+
+```
+deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [build, oidc-test]
+    environment: staging
+    if: github.event_name == 'push' || github.event.inputs.environment == 'staging'
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: .
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+          aws-region: eu-west-2
+        
+      - name: Check files
+        run: ls -la
+        # Testing and seeing if files do exsist.
+
+      - name: Upload file to S3
+        run: |
+            aws s3 cp ./app.zip s3://${{ secrets.AWS_S3_BUCKET }}/app.zip
+
+      - name: Creating Elastic Beanstalk Application Verison
+        run: |
+          aws elasticbeanstalk create-application-version \
+          --application-name ${{ secrets.ELASTIC_BEANSTALK_APP_NAME }} \
+          --version-label ${{ github.run_id }} \
+          --description ${{ github.run_id }} \
+          --source-bundle S3Bucket=${{secrets.AWS_S3_BUCKET}},S3Key="app.zip"
+
+      - name: ElasticBeanStalk Update Environment
+        run: |
+          aws elasticbeanstalk update-environment \
+          --application-name ${{ secrets.ELASTIC_BEANSTALK_APP_NAME }} \
+          --environment-name ${{ secrets.ELASTIC_BEANSTALK_ENV_NAME }} \
+          --version-label ${{ github.run_id }}
+```
 
 
 ### Why I used an S3 Bucket
