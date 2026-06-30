@@ -10,6 +10,16 @@ My main goal is to understand the lifecycle used from development to infrastruct
 
 ## 2. Project Architecture
 ## 3. CI/CD Pipeline
+
+The GitHub Actions workflow is located in:
+
+```
+.github/workflows/deploy-AWS-app-service.yml
+```
+
+The pipeline runs when changes are pushed to the main branch and when files inside the sample-app directory or the workflow file are updated. The workflow can also be triggered manually by using the workflow_dispatch within the GitHub Actions column of this repository, allowing either the staging or production environment to be selected.
+
+
 ## 4. Workflow Stages & Services
 
 ### Built App
