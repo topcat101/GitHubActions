@@ -14,13 +14,50 @@ My main goal is to understand the lifecycle used from development to infrastruct
 
 ### Built App
 
+The build job performs the following steps:
+
+- Checks out the repository code
+
+- Sets up Node.js
+
+- Installs dependencies using npm ci
+
+- Runs the test command
+
+- Builds the application
+
+- Creates a deployment package called app.zip
+ 
+- Uploads the package as a GitHub Actions artefact
+
+Separating each job from the others, making it easier to understand the process being done within the GitHub Actions.
+
 ### OIDC Authentication Test
+
+The reason for the OIDC authentication test is to confirm that GitHub Actions can securely authenticate to AWS using an IAM role. This provides a quick and safe method, preventing long-lived access keys; the workflow uses GitHub OpenID Connect to request temporary AWS credentials. Allowing for improved security, since no permanent/ hard coded credentials are stored inside the workflow 
 
 ### Deploy to staging
 
+The staging deployment job performs the following steps:
+
+- Downloads the build artifact
+  
+- Authenticates to AWS using OIDC
+  
+- Uploads app.zip to an S3 bucket
+  
+- Creates a new Elastic Beanstalk application version
+  
+- Updates the Elastic Beanstalk environment to deploy the new version
+
+
 ### Why I used an S3 Bucket
 
-The reason why I have used the S3 bucket is so that I can store my sample app within the S3 Bucket, making it easily accessible for GitHub Actions to push my app into Elastic Beanstalk. Also, this provides swift actions within the AWS environment, allowing for everything to run smoothly and autonomously. 
+The reason why I have used the S3 bucket is so that I can store my sample app within the S3 Bucket, making it easily accessible for GitHub Actions to push my app into Elastic Beanstalk. Also, this provides swift actions within the AWS environment, allowing everything to run smoothly and autonomously. 
+
+The deployment process
+
+App.zip uploaded to S3 -> Beanstalk version created from S3 -> Elastic Beanstalk environment updated to use that version
 
 ### Why Elastic Beanstalk is used
 
