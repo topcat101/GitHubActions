@@ -14,6 +14,16 @@ My main goal is to understand the lifecycle used from development to infrastruct
 ## 5. Workflow Stages
 ## 6. Security / OIDC
 ## 7. GitHub Secrets
+Example secrets:
+```
+AWS_IAM_ROLE
+AWS_S3_BUCKET
+ELASTIC_BEANSTALK_APP_NAME
+ELASTIC_BEANSTALK_ENV_NAME
+```
+These values are stored in:
+GitHub Repository → Settings → Secrets and variables → Actions
+
 ## 8. What This Project Demonstrates
 ## 9. AWS CLI Commands Used
 ## 10. Lessons Learned
