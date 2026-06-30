@@ -189,7 +189,7 @@ ELASTIC_BEANSTALK_ENV_NAME
 ```
 These values are stored in:
 ```
-GitHub Repository → Settings → Secrets and variables → Actions
+GitHub Repository -> Settings -> Secrets and variables -> Actions
 ```
 
 ### AWS CLI Commands Used
