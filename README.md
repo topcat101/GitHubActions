@@ -18,7 +18,9 @@ My main goal is to understand the lifecycle used from development to infrastruct
 
 ### Deploy to staging
 
-## Why S3 is used
+### Why I used an S3 Bucket
+
+The reason why I have used the S3 bucket is so that I can store my sample app within the S3 Bucket, making it easily accessible for GitHub Actions to push my app into Elastic Beanstalk. Also, this provides swift actions within the AWS environment, allowing for everything to run smoothly and autonomously. 
 
 ### Why Elastic Beanstalk is used
 
