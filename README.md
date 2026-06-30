@@ -194,7 +194,29 @@ GitHub Repository -> Settings -> Secrets and variables -> Actions
 
 ### AWS CLI Commands Used
 
+Upload deployment package to S3:
 
+```
+aws s3 cp ./app.zip s3://example-bucket/app.zip
+```
+
+Create Elastic Beanstalk application version:
+
+```
+aws elasticbeanstalk create-application-version \
+  --application-name example-application \
+  --version-label example-version \
+  --source-bundle S3Bucket=example-bucket,S3Key=app.zip
+```
+
+Update Elastic Beanstalk environment:
+
+```
+aws elasticbeanstalk update-environment \
+  --application-name example-application \
+  --environment-name example-environment \
+  --version-label example-version
+```
 
 ## 5. Appendix 
 ```
