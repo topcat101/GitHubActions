@@ -9,6 +9,11 @@ My main goal is to understand the lifecycle used from development to infrastruct
 
 
 ## 2. Project Architecture
+
+<img width="1122" height="1402" alt="image" src="https://github.com/user-attachments/assets/840e92b4-80cd-4a0c-9960-6ee2596d8024" />
+
+Ref - This was copied from ChatGPT
+
 ## 3. CI/CD Pipeline
 
 The GitHub Actions workflow is located in:
