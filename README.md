@@ -1,7 +1,7 @@
 # GitHubActions
 
 ## 1. Overview
-The idea of this project is to deploy my sample code from VSCode into AWS Beanstalk, allowing for a smooth process overall. The technologies I have used for this are AWS IAM, GitHub Actions, OIDC Authentication, Amazon S3, and AWS Elastic Beanstalk.
+The idea of this project is to deploy my sample code from VSCode into AWS Beanstalk, allowing for a smooth process overall. The technologies I have used for this are AWS IAM, GitHub Actions, OpenID Connect (OIDC) Authentication, Amazon S3, and AWS Elastic Beanstalk.
 
 The sample application is built with Node.js and deployed to AWS Elastic Beanstalk through automation via a GitHub Actions pipeline. The workflow builds the application, creates a deployment, package, uploads the package to S3, creates the Elastic Beanstalk application version and updates the environment.
 
@@ -177,7 +177,30 @@ App.zip uploaded to S3 -> Beanstalk version created from S3 -> Elastic Beanstalk
 
 ### Why Elastic Beanstalk is used
 
-### Security / OIDC
+### Security & OIDC
+
+This project uses GitHub OIDC to authenticate to AWS. The workflow requires the following GitHub Actions permissions:
+
+```
+permissions:
+  id-token: write
+  contents: read
+```
+
+```
+id-token: write 
+```
+Allows GitHub Actions to request an OIDC token.
+```
+contents: read 
+```
+Allows GitHub Actions to read the repository contents during the checkout step.
+
+AWS access is controlled using an IAM role with permissions required for S3 upload and Elastic Beanstalk deployment. For the flow of OIDC, this shows the process of how GitHub actions requests temp access to the AWS service.
+
+<img width="1100" height="488" alt="image" src="https://github.com/user-attachments/assets/11cc34e3-519e-4e7e-b203-bc05e2a8abeb" />
+
+Ref for img - https://medium.com/@integrationninjas/authenticate-github-actions-with-aws-using-oidc-16f90f54f104
 
 ### GitHub Secrets
 Example secrets:
