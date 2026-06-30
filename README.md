@@ -8,12 +8,23 @@ The sample application is built with Node.js and deployed to AWS Elastic Beansta
 My main goal is to understand the lifecycle used from development to infrastructure, demonstrating cloud deployment automation, secure authentication, built artefacts, and application release management using GitHub automation.
 
 
-## 2. Technologies Used
-## 3. Project Architecture
-## 4. CI/CD Pipeline
-## 5. Workflow Stages
-## 6. Security / OIDC
-## 7. GitHub Secrets
+## 2. Project Architecture
+## 3. CI/CD Pipeline
+## 4. Workflow Stages & Services
+
+### Built App
+
+### OIDC Authentication Test
+
+### Deploy to staging
+
+## Why S3 is used
+
+### Why Elastic Beanstalk is used
+
+### Security / OIDC
+
+### GitHub Secrets
 Example secrets:
 ```
 AWS_IAM_ROLE
@@ -26,9 +37,8 @@ These values are stored in:
 GitHub Repository → Settings → Secrets and variables → Actions
 ```
 
-## 8. What This Project Demonstrates
-## 9. AWS CLI Commands Used
-## 10. Lessons Learned
+## 5. AWS CLI Commands Used
+## 6. Lessons Learned
 
 
 ```
